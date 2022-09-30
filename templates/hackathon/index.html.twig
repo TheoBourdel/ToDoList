@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des hachathons!{% endblock %}
+
+{% block body %}
+    {% for hackathon in hackathons %}
+        {{ hackathon.name }}
+        <a href="{{ path('hackathon_show', {'id': hackathon.id}) }}">Voir</a>
+
+    {% else %}
+        Aucun hackathon trouvé.
+    {% endfor %}
+{% endblock %}
