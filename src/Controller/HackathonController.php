@@ -5,14 +5,16 @@ namespace App\Controller;
 use App\Entity\Hackathon;
 use App\Form\HackathonType;
 use App\Repository\HackathonRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/hackathon', name: 'hackathon_')]
 class HackathonController extends AbstractController
 {
-    #[Route('/hackathon', name: 'hackathon_index')]
+    #[Route('/', name: 'index', methods: ['GET'])]
     public function index(HackathonRepository $hackathonRepository): Response
     {
         return $this->render('hackathon/index.html.twig', [
@@ -20,7 +22,7 @@ class HackathonController extends AbstractController
         ]);
     }
 
-    #[Route('/hackathon/create', name: 'hackathon_create')]
+    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request, HackathonRepository $hackathonRepository): Response
     {
         $hackathon = new Hackathon();
@@ -40,11 +42,43 @@ class HackathonController extends AbstractController
         ]);
     }
 
-    #[Route('/hackathon/{id}', name: 'hackathon_show', requirements: ['id' => '\d'])]
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Hackathon $hackathon, Request $request, ManagerRegistry $managerRegistry): Response
+    {
+        $form = $this->createForm(HackathonType::class, $hackathon);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $managerRegistry->getManager()->flush();
+
+            return $this->redirectToRoute('hackathon_show', [
+                'id' => $hackathon->getId()
+            ]);
+        }
+
+        return $this->render('hackathon/edit.html.twig', [
+            'form' => $form->createView(),
+            'hackathon' => $hackathon
+        ]);
+    }
+
+    #[Route('/{id}', name: 'show', requirements: ['id' => '\d'], methods: ['GET'])]
     public function show(Hackathon $hackathon): Response
     {
         return $this->render('hackathon/show.html.twig', [
             'hackathon' => $hackathon
         ]);
+    }
+
+    #[Route('/{id}/remove/{token}', name: 'remove', requirements: ['id' => '\d'], methods: ['GET'])]
+    public function remove(Hackathon $hackathon, string $token, HackathonRepository $hackathonRepository): Response
+    {
+        if (!$this->isCsrfTokenValid('remove' . $hackathon->getId(), $token)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $hackathonRepository->remove($hackathon, true);
+
+        return $this->redirectToRoute('hackathon_index');
     }
 }

@@ -23,6 +23,10 @@ class Hackathon
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\ManyToOne(inversedBy: 'hackathons')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Year $year = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +64,18 @@ class Hackathon
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getYear(): ?Year
+    {
+        return $this->year;
+    }
+
+    public function setYear(?Year $year): self
+    {
+        $this->year = $year;
 
         return $this;
     }
