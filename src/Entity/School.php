@@ -2,23 +2,23 @@
 
 namespace App\Entity;
 
-use App\Repository\YearRepository;
+use App\Repository\SchoolRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: YearRepository::class)]
-class Year
+#[ORM\Entity(repositoryClass: SchoolRepository::class)]
+class School
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $date = null;
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'year', targetEntity: Hackathon::class)]
+    #[ORM\ManyToMany(targetEntity: Hackathon::class, mappedBy: 'schools')]
     private Collection $hackathons;
 
     public function __construct()
@@ -31,14 +31,14 @@ class Year
         return $this->id;
     }
 
-    public function getDate(): ?string
+    public function getName(): ?string
     {
-        return $this->date;
+        return $this->name;
     }
 
-    public function setDate(string $date): self
+    public function setName(string $name): self
     {
-        $this->date = $date;
+        $this->name = $name;
 
         return $this;
     }
@@ -55,7 +55,7 @@ class Year
     {
         if (!$this->hackathons->contains($hackathon)) {
             $this->hackathons->add($hackathon);
-            $hackathon->setYear($this);
+            $hackathon->addSchool($this);
         }
 
         return $this;
@@ -64,10 +64,7 @@ class Year
     public function removeHackathon(Hackathon $hackathon): self
     {
         if ($this->hackathons->removeElement($hackathon)) {
-            // set the owning side to null (unless already changed)
-            if ($hackathon->getYear() === $this) {
-                $hackathon->setYear(null);
-            }
+            $hackathon->removeSchool($this);
         }
 
         return $this;
