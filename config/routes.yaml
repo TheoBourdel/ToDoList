@@ -8,3 +8,7 @@ controllers_back:
     type: attribute
     name_prefix: back_
     prefix: /admin/
+
+controller_security:
+    resource: ../src/Controller/SecurityController.php
+    type: attribute
