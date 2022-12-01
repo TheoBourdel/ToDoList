@@ -5,8 +5,11 @@ namespace App\Controller\Back;
 use App\Entity\Hackathon;
 use App\Form\HackathonType;
 use App\Repository\HackathonRepository;
+use App\Security\Voter\HackathonVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,8 +21,14 @@ class HackathonController extends AbstractController
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(HackathonRepository $hackathonRepository): Response
     {
+        if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+            $hackathons = $hackathonRepository->findBy([], ['position' => 'ASC']);
+        } else {
+            $hackathons = $this->getUser()->getHackathons();
+        }
+
         return $this->render('back/hackathon/index.html.twig', [
-            'hackathons' => $hackathonRepository->findBy([], ['position' => 'ASC'])
+            'hackathons' => $hackathons
         ]);
     }
 
@@ -33,6 +42,7 @@ class HackathonController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_COACH')]
     public function create(Request $request, HackathonRepository $hackathonRepository): Response
     {
         $hackathon = new Hackathon();
@@ -53,8 +63,13 @@ class HackathonController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    /** #[IsGranted(HackathonVoter::EDIT, 'hackathon')] */
+    #[Security('is_granted("ROLE_ADMIN") or hackathon.getCreatedBy() === user')]
     public function edit(Hackathon $hackathon, Request $request, ManagerRegistry $managerRegistry): Response
     {
+        // Same to attributes 'IsGranted'
+        //$this->denyAccessUnlessGranted(HackathonVoter::EDIT, $hackathon);
+
         $form = $this->createForm(HackathonType::class, $hackathon);
         $form->handleRequest($request);
 
@@ -73,6 +88,7 @@ class HackathonController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted(HackathonVoter::SHOW, 'hackathon')]
     public function show(Hackathon $hackathon): Response
     {
         return $this->render('back/hackathon/show.html.twig', [
@@ -82,6 +98,7 @@ class HackathonController extends AbstractController
     }
 
     #[Route('/{id}/remove/{token}', name: 'remove', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted(HackathonVoter::DELETE, 'hackathon')]
     public function remove(Hackathon $hackathon, string $token, HackathonRepository $hackathonRepository): Response
     {
         if (!$this->isCsrfTokenValid('remove' . $hackathon->getId(), $token)) {

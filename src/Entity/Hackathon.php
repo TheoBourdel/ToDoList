@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\BlameableTrait;
 use App\Entity\Traits\TimestampableTrait;
 use App\Repository\HackathonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,6 +22,7 @@ use Symfony\Component\Validator\Constraints\Type;
 class Hackathon
 {
     use TimestampableTrait;
+    use BlameableTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -65,11 +67,15 @@ class Hackathon
     #[ORM\OneToMany(mappedBy: 'hackathonOwner', targetEntity: Document::class)]
     private Collection $documents;
 
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'hackathons')]
+    private Collection $participants;
+
     public function __construct()
     {
         $this->schools = new ArrayCollection();
         $this->groups = new ArrayCollection();
         $this->documents = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -241,6 +247,30 @@ class Hackathon
                 $document->setHackathonOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(User $participant): self
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants->add($participant);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(User $participant): self
+    {
+        $this->participants->removeElement($participant);
 
         return $this;
     }

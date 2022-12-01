@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Hackathon;
+use App\Entity\User;
 use App\Entity\Year;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -16,6 +17,7 @@ class HackathonFixtures extends Fixture implements DependentFixtureInterface
         $faker = Factory::create('fr_FR');
 
         $years = $manager->getRepository(Year::class)->findAll();
+        $users = $manager->getRepository(User::class)->findAll();
 
         for ($i=0; $i<10; $i++) {
             $object = (new Hackathon())
@@ -24,6 +26,11 @@ class HackathonFixtures extends Fixture implements DependentFixtureInterface
                 ->setStartDate($faker->dateTimeBetween('-1 years', 'now'))
                 ->setYear($faker->randomElement($years))
             ;
+
+            for ($y=0; $y<$faker->numberBetween(1, 10); $y++) {
+                $object->addParticipant($faker->randomElement($users));
+            }
+
             $manager->persist($object);
         }
 
@@ -33,7 +40,8 @@ class HackathonFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            YearFixtures::class
+            YearFixtures::class,
+            UserFixtures::class
         ];
     }
 }
