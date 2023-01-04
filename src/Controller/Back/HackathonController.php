@@ -37,7 +37,6 @@ class HackathonController extends AbstractController
         $years = $yearRepository->findAll();
 
         return $this->render('back/hackathon/index.html.twig', [
-            'lastSubmit' => $request->request,
             'hackathons' => $hackathons,
             'years' => $years,
         ]);
