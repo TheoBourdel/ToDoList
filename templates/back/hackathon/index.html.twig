@@ -5,6 +5,11 @@
 {% block body %}
     <form method="POST">
         <input type="text" name="search" placeholder="Rechercher un hachathon">
+        <select name="year">
+          {% for year in years %}
+            <option value="{{ year.id }}">{{ year.date }}</option>
+          {% endfor %}
+        </select>
         <button type="submit">Envoyer</button>
     </form>
 

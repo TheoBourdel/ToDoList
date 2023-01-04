@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Hackathon;
 use App\Form\HackathonType;
 use App\Repository\HackathonRepository;
+use App\Repository\YearRepository;
 use App\Security\Voter\HackathonVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,12 +20,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class HackathonController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET', 'POST'])]
-    public function index(HackathonRepository $hackathonRepository, Request $request): Response
+    public function index(HackathonRepository $hackathonRepository, YearRepository $yearRepository, Request $request): Response
     {
-
         if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
             if ($request->getMethod() === 'POST') {
-                $hackathons = $hackathonRepository->search('ut', 10);
+                $search = $request->request->get('search');
+                $year = $request->request->get('year');
+                $hackathons = $hackathonRepository->search($search, $year, 10);
             } else {
                 $hackathons = $hackathonRepository->findBy([], ['position' => 'ASC']);
             }
@@ -32,8 +34,12 @@ class HackathonController extends AbstractController
             $hackathons = $this->getUser()->getHackathons();
         }
 
+        $years = $yearRepository->findAll();
+
         return $this->render('back/hackathon/index.html.twig', [
-            'hackathons' => $hackathons
+            'lastSubmit' => $request->request,
+            'hackathons' => $hackathons,
+            'years' => $years,
         ]);
     }
 

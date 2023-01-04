@@ -42,19 +42,24 @@ class HackathonRepository extends ServiceEntityRepository
     /**
      * @return Hackathon[] Returns an array of Hackathon objects
      */
-    public function search($value, $limit): array
+    public function search($value, $year, $limit = 30): array
     {
-        $result = $this->createQueryBuilder('h')
-            ->orWhere('h.name LIKE :val')
-            ->orWhere('h.description LIKE :val')
-            ->setParameter('val', '%' . $value . '%')
+        $query = $this->createQueryBuilder('h')
             ->orderBy('h.name', 'ASC')
             ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult()
         ;
 
-        return $result;
+        if ($value) {
+            $query->andWhere('h.name LIKE :val')
+                ->setParameter('val', '%' . $value . '%');
+        }
+
+        if ($year) {
+            $query->andWhere('h.year = :year')
+                ->setParameter('year', $year);
+        }
+
+        return $query->getQuery()->getResult();
     }
 
 //    public function findOneBySomeField($value): ?Hackathon
