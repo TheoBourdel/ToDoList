@@ -18,11 +18,16 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/hackathon', name: 'hackathon_')]
 class HackathonController extends AbstractController
 {
-    #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(HackathonRepository $hackathonRepository): Response
+    #[Route('/', name: 'index', methods: ['GET', 'POST'])]
+    public function index(HackathonRepository $hackathonRepository, Request $request): Response
     {
+
         if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
-            $hackathons = $hackathonRepository->findBy([], ['position' => 'ASC']);
+            if ($request->getMethod() === 'POST') {
+                $hackathons = $hackathonRepository->search('ut', 10);
+            } else {
+                $hackathons = $hackathonRepository->findBy([], ['position' => 'ASC']);
+            }
         } else {
             $hackathons = $this->getUser()->getHackathons();
         }

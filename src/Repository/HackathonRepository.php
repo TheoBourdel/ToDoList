@@ -39,20 +39,23 @@ class HackathonRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Hackathon[] Returns an array of Hackathon objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('h')
-//            ->andWhere('h.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('h.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Hackathon[] Returns an array of Hackathon objects
+     */
+    public function search($value, $limit): array
+    {
+        $result = $this->createQueryBuilder('h')
+            ->orWhere('h.name LIKE :val')
+            ->orWhere('h.description LIKE :val')
+            ->setParameter('val', '%' . $value . '%')
+            ->orderBy('h.name', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $result;
+    }
 
 //    public function findOneBySomeField($value): ?Hackathon
 //    {

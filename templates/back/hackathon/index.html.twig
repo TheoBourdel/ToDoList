@@ -3,6 +3,13 @@
 {% block title %}Liste des hachathons!{% endblock %}
 
 {% block body %}
+    <form method="POST">
+        <input type="text" name="search" placeholder="Rechercher un hachathon">
+        <button type="submit">Envoyer</button>
+    </form>
+
+    <br>
+
     {% for hackathon in hackathons %}
         {{ hackathon.name }}
         <a href="{{ path('back_hackathon_show', {'id': hackathon.id}) }}">Voir</a>
