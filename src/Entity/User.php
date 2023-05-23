@@ -33,6 +33,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Hackathon::class, mappedBy: 'participants')]
     private Collection $hackathons;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?ToDo $todo = null;
+
     public function __construct()
     {
         $this->hackathons = new ArrayCollection();
@@ -131,6 +134,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->hackathons->removeElement($hackathon)) {
             $hackathon->removeParticipant($this);
         }
+
+        return $this;
+    }
+
+    public function getTodo(): ?ToDo
+    {
+        return $this->todo;
+    }
+
+    public function setTodo(?ToDo $todo): self
+    {
+        $this->todo = $todo;
 
         return $this;
     }

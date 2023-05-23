@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<title>Item index</title>
+
+{% block body %}
+    <h1>Item index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Content</th>
+                <th>Creation_date</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.content }}</td>
+                <td>{{ item.creationDate ? item.creationDate|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('front_app_item_show', {'id': item.id}) }}">show</a>
+                    <a href="{{ path('front_app_item_edit', {'id': item.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('front_app_item_new') }}">Create new</a>
+{% endblock %}
