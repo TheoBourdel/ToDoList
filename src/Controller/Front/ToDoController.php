@@ -31,7 +31,7 @@ class ToDoController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $toDoRepository->save($toDo, true);
 
-            return $this->redirectToRoute('app_to_do_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('front_app_to_do_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('to_do/new.html.twig', [
@@ -57,7 +57,7 @@ class ToDoController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $toDoRepository->save($toDo, true);
 
-            return $this->redirectToRoute('app_to_do_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('front_app_to_do_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('to_do/edit.html.twig', [
@@ -73,6 +73,6 @@ class ToDoController extends AbstractController
             $toDoRepository->remove($toDo, true);
         }
 
-        return $this->redirectToRoute('app_to_do_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('front_app_to_do_index', [], Response::HTTP_SEE_OTHER);
     }
 }

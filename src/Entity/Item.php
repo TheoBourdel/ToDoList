@@ -23,6 +23,9 @@ class Item
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $creation_date = null;
 
+    #[ORM\ManyToOne(inversedBy: 'item')]
+    private ?ToDo $toDo = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +63,18 @@ class Item
     public function setCreationDate(\DateTimeInterface $creation_date): self
     {
         $this->creation_date = $creation_date;
+
+        return $this;
+    }
+
+    public function getToDo(): ?ToDo
+    {
+        return $this->toDo;
+    }
+
+    public function setToDo(?ToDo $toDo): self
+    {
+        $this->toDo = $toDo;
 
         return $this;
     }

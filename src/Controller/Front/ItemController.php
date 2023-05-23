@@ -31,7 +31,7 @@ class ItemController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $itemRepository->save($item, true);
 
-            return $this->redirectToRoute('app_item_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('front_app_item_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('item/new.html.twig', [
@@ -57,7 +57,7 @@ class ItemController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $itemRepository->save($item, true);
 
-            return $this->redirectToRoute('app_item_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('front_app_item_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('item/edit.html.twig', [
