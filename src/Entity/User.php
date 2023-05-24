@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -34,6 +36,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?ToDo $todo = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $firstname = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $lastname = null;
+
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTime $birthdate = null;
 
     public function __construct()
     {
@@ -120,4 +131,85 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(string $firstname): self
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(string $lastname): self
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getBirthdate(): ?\DateTime
+    {
+        return $this->birthdate;
+    }
+
+    public function setBirthdate(\DateTime $birthdate): self
+    {
+        $this->birthdate = $birthdate;
+
+        return $this;
+    }
+
+
+    public function isValid()
+    {
+        $validator = Validation::createValidator();
+
+        $constraints = new Assert\Collection([
+            'email' => [
+                new Assert\Email(),
+            ],
+            'firstName' => [
+                new Assert\NotBlank(),
+            ],
+            'lastName' => [
+                new Assert\NotBlank(),
+            ],
+            'password' => [
+                new Assert\Length(['min' => 8, 'max' => 40]),
+                new Assert\Regex('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/'),
+            ],
+            'birthdate' => [
+                new Assert\LessThanOrEqual(new \DateTime('-13 years')),
+            ],
+        ]);
+
+        $violations = $validator->validate([
+            'email' => $this->email,
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'password' => $this->password,
+            'birthdate' => $this->birthdate,
+        ], $constraints);
+
+        if (count($violations) > 0) {
+            $messages = [];
+            foreach ($violations as $violation) {
+                $messages[] = $violation->getMessage();
+            }
+            throw new \RuntimeException(implode(', ', $messages));
+        }
+    }
+
+
+
+
 }
