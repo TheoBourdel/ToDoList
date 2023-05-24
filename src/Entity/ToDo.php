@@ -53,7 +53,46 @@ class ToDo
 
     public function addItem(Item $item): self
     {
+        // Vérifie la limite d'items par ToDo
+        if ($this->item->count() >= 10) {
+            throw new \RuntimeException("La limite de 10 items par todo a été atteinte.");
+        }
+    
+        // Vérifie que l'item a un nom unique
+        $itemName = $item->getName();
+        foreach ($this->item as $existingItem) {
+            if ($existingItem->getName() === $itemName) {
+                throw new \RuntimeException("Un item avec le même nom existe déjà.");
+            }
+        }
+        // Vérifie que le nom est renseigné
+        if($item->getName() == "" || $item->getName() == null) {
+            throw new \RuntimeException("L'item ne possède pas de nom");
+        }
 
+        // Vérifie la longueur maximale du contenu
+        $content = $item->getContent();
+        if ($content !== null && mb_strlen($content) > 1000) {
+            throw new \RuntimeException("Le contenu de l'item dépasse la limite de 1000 caractères.");
+        }
+
+        // Vérifie que le contenu est renseigné
+        if($item->getContent() == "" || $item->getContent() == null) {
+            throw new \RuntimeException("L'item ne possède pas de contenu");
+        }
+
+        // Vérifie la date de création
+        $createdAt = $item->getCreationDate();
+        if ($createdAt === null) {
+            throw new \RuntimeException("La date de création de l'item n'est pas renseignée.");
+        }
+
+        foreach ($this->item as $existingItem) {
+            $existingCreatedAt = $existingItem->getCreationDate();
+            if ($existingCreatedAt !== null && $createdAt->diff($existingCreatedAt)->i < 30) {
+                throw new \RuntimeException("Il faut respecter une période de 30 minutes entre la création de deux items d'une même liste.");
+            }
+        }
 
         if (!$this->item->contains($item)) {
             $this->item->add($item);
@@ -73,5 +112,15 @@ class ToDo
         }
 
         return $this;
+    }
+
+    private function checkIntervalBetweenItems(\DateTimeInterface $createdAt): void
+    {
+        foreach ($this->item as $existingItem) {
+            $existingCreatedAt = $existingItem->getCreatedAt();
+            if ($existingCreatedAt !== null && $createdAt->diff($existingCreatedAt)->i < 30) {
+                throw new \RuntimeException("Il faut respecter une période de 30 minutes entre la création de deux items d'une même liste.");
+            }
+        }
     }
 }
