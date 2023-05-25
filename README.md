@@ -1,10 +1,10 @@
 # Getting Started
 
 `docker-compose up -d`<br/>
-`docker-compose exec php bin/console make:migration`
-`docker-compose exec php bin/console d:m:m`
+`docker-compose exec php bin/console make:migration`<br/>
+`docker-compose exec php bin/console d:m:m`<br/><br/>
 
-`npm i`
+`npm i`<br/>
 `npm run watch`
 
 # Lancer les tests
@@ -15,5 +15,5 @@
 ## les tests
 tests/
 ## les fonctions
-src/Entity/User.php
-serc/Entity/ToDo.php
+src/Entity/User.php<br/>
+serc/Entity/ToDo.php<br/>
