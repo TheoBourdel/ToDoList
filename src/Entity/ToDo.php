@@ -120,13 +120,5 @@ class ToDo
         return $this;
     }
 
-    private function checkIntervalBetweenItems(\DateTimeInterface $createdAt): void
-    {
-        foreach ($this->item as $existingItem) {
-            $existingCreatedAt = $existingItem->getCreatedAt();
-            if ($existingCreatedAt !== null && $createdAt->diff($existingCreatedAt)->i < 30) {
-                throw new \RuntimeException("Il faut respecter une période de 30 minutes entre la création de deux items d'une même liste.");
-            }
-        }
-    }
+    
 }
