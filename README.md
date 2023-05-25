@@ -1,6 +1,6 @@
 # Getting Started
 
-`docker-compose up -d`
+`docker-compose up -d`####
 `docker-compose exec php bin/console make:migration`
 `docker-compose exec php bin/console d:m:m`
 
