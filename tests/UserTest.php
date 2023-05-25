@@ -33,6 +33,7 @@ class UserTest extends TestCase
 
         $isValid = $user->isValid();
 
+
         $this->assertFalse($isValid);
     }
 }

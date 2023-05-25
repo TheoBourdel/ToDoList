@@ -205,11 +205,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             foreach ($violations as $violation) {
                 $messages[] = $violation->getMessage();
             }
-            throw new \RuntimeException(implode(', ', $messages));
+            //throw new \RuntimeException(implode(', ', $messages));
+            return false;
+
+        } else {
+            return true;
         }
+
+
+
     }
-
-
-
-
 }
