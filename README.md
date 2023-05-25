@@ -13,7 +13,8 @@
 
 # Ou trouver le code
 ## les tests
-tests/
+tests/ToDoTest.php<br/>
+tests/UserTest.php
 ## les fonctions
 src/Entity/User.php<br/>
 serc/Entity/ToDo.php<br/>
