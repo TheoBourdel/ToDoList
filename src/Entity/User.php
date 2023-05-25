@@ -194,8 +194,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         $violations = $validator->validate([
             'email' => $this->email,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
+            'firstName' => $this->firstname,
+            'lastName' => $this->lastname,
             'password' => $this->password,
             'birthdate' => $this->birthdate,
         ], $constraints);

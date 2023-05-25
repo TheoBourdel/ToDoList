@@ -18,9 +18,8 @@ class ToDoTest extends TestCase
             $item = new Item();
             $item->setName("Item $i");
             $item->setContent("content $i");
-            $item->setCreationDate($creationDate);
+            $item->setCreationDate(clone $creationDate);
             $todo->addItem($item);
-
             $creationDate->add(new \DateInterval('PT30M'));
 
         }

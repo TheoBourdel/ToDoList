@@ -89,8 +89,14 @@ class ToDo
 
         foreach ($this->item as $existingItem) {
             $existingCreatedAt = $existingItem->getCreationDate();
-            if ($existingCreatedAt !== null && $createdAt->diff($existingCreatedAt)->i < 30) {
-                throw new \RuntimeException("Il faut respecter une période de 30 minutes entre la création de deux items d'une même liste.");
+            
+            if ($existingCreatedAt !== null) {
+                $interval = $existingCreatedAt->diff($createdAt);
+                $minutesDiff = $interval->i + ($interval->h * 60) + ($interval->d * 24 * 60);
+                
+                if ($minutesDiff < 30) {
+                    throw new \RuntimeException("Il faut respecter une période de 30 minutes entre la création de deux items d'une même liste.");
+                }
             }
         }
 
