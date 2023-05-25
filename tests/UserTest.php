@@ -30,9 +30,9 @@ class UserTest extends TestCase
         $user->setLastName('Doe');
         $user->setPassword('password');
         $user->setBirthdate(new \DateTime('-10 years'));
+        $this->expectException(\RuntimeException::class);
 
         $isValid = $user->isValid();
-
 
         $this->assertFalse($isValid);
     }
