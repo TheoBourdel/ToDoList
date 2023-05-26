@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\EmailSenderService;
+use App\Repository\UserRepository;
 use App\Repository\ToDoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -53,6 +55,7 @@ class ToDo
 
     public function addItem(Item $item): self
     {
+
         // Vérifie la limite d'items par ToDo
         if ($this->item->count() >= 10) {
             throw new \RuntimeException("La limite de 10 items par todo a été atteinte.");
@@ -102,6 +105,18 @@ class ToDo
 
         if (!$this->item->contains($item)) {
             $this->item->add($item);
+            // Vérifie si on a atteint le 8ème item et envoyer un mail ToDo
+            /*if ($this->item->count() == 8) {
+                $userId = $this->getId();
+                $getUser = new UserRepository();
+                $user = $getUser->find($userId);
+
+                $mail = new EmailSenderService();
+                $mail->setContent("Il vous reste deux items à ajouter")
+                    ->setObject("information item")
+                    ->setRecipent($user)
+                    ->sendEmail();
+            }*/
             $item->setToDo($this);
         }
 
@@ -119,6 +134,5 @@ class ToDo
 
         return $this;
     }
-
     
 }

@@ -2,11 +2,17 @@
 
 namespace App\Tests;
 
+use App\Entity\EmailSenderService;
+use App\Repository\EmailSenderServiceRepository;
+use App\Repository\UserRepository;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use App\Entity\ToDo;
 use App\Entity\Item;
 use App\Entity\User;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use App\Entity\EmailSender;
 
 class ToDoTest extends TestCase
 {
@@ -159,5 +165,65 @@ class ToDoTest extends TestCase
         $this->expectException(\RuntimeException::class);
 
         $isValid = $user->isValid();
+    }
+
+    public function testSendingEmailTrue()
+    {
+        $user = new User();
+        $user->setEmail('fernandesamilcar28@gmail.com');
+
+        // Instanciation de la classe EmailSendingClass avec le mock du MailerInterface
+        $emailSenderService = new EmailSenderService();
+        $emailSenderService
+            ->setRecipent($user)
+            ->setObject("test object")
+            ->setContent("test content");
+
+        $this->assertTrue($emailSenderService->testSendingEmail());
+    }
+
+    public function testSendingEmailWithoutObject()
+    {
+        $user = new User();
+        $user->setEmail('fernandesamilcar28@gmail.com');
+
+        // Instanciation de la classe EmailSendingClass avec le mock du MailerInterface
+        $emailSenderService = new EmailSenderService();
+        $emailSenderService
+            ->setRecipent($user)
+            ->setObject('')
+            ->setContent("test content");
+
+        $this->assertFalse($emailSenderService->testSendingEmail());
+    }
+
+    public function testSendingEmailWithoutContent()
+    {
+        $user = new User();
+        $user->setEmail('fernandesamilcar28@gmail.com');
+
+        // Instanciation de la classe EmailSendingClass avec le mock du MailerInterface
+        $emailSenderService = new EmailSenderService();
+        $emailSenderService
+            ->setRecipent($user)
+            ->setObject("test object")
+            ->setContent('');
+
+        $this->assertFalse($emailSenderService->testSendingEmail());
+    }
+
+    public function testSendingEmailWithoutRecipient()
+    {
+        $user = new User();
+        $user->setEmail('');
+
+        // Instanciation de la classe EmailSendingClass avec le mock du MailerInterface
+        $emailSenderService = new EmailSenderService();
+        $emailSenderService
+            ->setRecipent($user)
+            ->setObject("test object")
+            ->setContent("test content");
+
+        $this->assertFalse($emailSenderService->testSendingEmail());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\EmailSenderService;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -46,8 +47,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime')]
     private ?\DateTime $birthdate = null;
 
+    #[ORM\OneToMany(mappedBy: 'recipent', targetEntity: EmailSenderService::class)]
+    private Collection $emailSenderServices;
+
     public function __construct()
     {
+        $this->emailSenderServices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -215,4 +220,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     }
+
+    /**
+     * @return Collection<int, EmailSenderService>
+     */
+    public function getEmailSenderServices(): Collection
+    {
+        return $this->emailSenderServices;
+    }
+
+    public function addEmailSenderService(EmailSenderService $emailSenderService): self
+    {
+        if (!$this->emailSenderServices->contains($emailSenderService)) {
+            $this->emailSenderServices->add($emailSenderService);
+            $emailSenderService->setRecipent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmailSenderService(EmailSenderService $emailSenderService): self
+    {
+        if ($this->emailSenderServices->removeElement($emailSenderService)) {
+            // set the owning side to null (unless already changed)
+            if ($emailSenderService->getRecipent() === $this) {
+                $emailSenderService->setRecipent(null);
+            }
+        }
+
+        return $this;
+    }
+
 }
