@@ -106,17 +106,16 @@ class ToDo
         if (!$this->item->contains($item)) {
             $this->item->add($item);
             // Vérifie si on a atteint le 8ème item et envoyer un mail ToDo
-            /*if ($this->item->count() == 8) {
-                $userId = $this->getId();
-                $getUser = new UserRepository();
-                $user = $getUser->find($userId);
+            if ($this->item->count() == 8) {
+                $user = new User();
+                $user->setEmail("toto@gmail.com");
 
                 $mail = new EmailSenderService();
                 $mail->setContent("Il vous reste deux items à ajouter")
                     ->setObject("information item")
                     ->setRecipent($user)
-                    ->sendEmail();
-            }*/
+                    ->testSendingEmail();
+            }
             $item->setToDo($this);
         }
 
