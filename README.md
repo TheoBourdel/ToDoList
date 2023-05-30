@@ -17,4 +17,6 @@ tests/ToDoTest.php<br/>
 tests/UserTest.php
 ## les fonctions
 src/Entity/User.php<br/>
-serc/Entity/ToDo.php<br/>
+src/Entity/ToDo.php<br/>
+src/Entity/EmailSenderService.php<br/>
+src/Entity/EmailSender.php
